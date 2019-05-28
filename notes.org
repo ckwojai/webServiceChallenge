@@ -1,0 +1,118 @@
+* Requirement
+** Restful API using Python or Java that performs a search
+   1) The request should accept a search string as input.
+   2) The data to be searched should be in a MongoDB database.
+   3) The response should be formatted in JSON.
+** The API should handle at least one scalability concern
+** The API should handle at least one security concern.
+** Good programming best practices / Ability to write Reusable Code / Testing Strategy
+* Planning
+** Local Testing
+   - Set up Mongodb with sample data
+   - Set up Flask Backend in Python
+   - Connection between Flask and Mongodb
+   - Design Search REST API and Research Best Practice (filtering)
+   - Set up simple Angular Frontend App that interacts with Search API
+** Scalability and Security
+   - Research Scalability concern and Implementation
+   - Research Security concern and Implementation
+** Deployment
+   - Set up Mongodb in Google VM instance
+   - Deploy Flask backend in GCF that is able to connect to Mongodb in VM
+   - Deploy Frontend in Stackblitz with GCF base URL above
+
+* Local Testing Logs
+** Set up Mongodb with Sample Data
+  1) Research for Sample Data and Found [[https://medium.com/dbkoda/mongodb-sample-collections-52d6a7745908][MongoDB sample Collections]]
+  2) Settle on Sakila DB
+  3) Import .json files to Mongo DB
+	 #+begin_src shell
+# New Database
+> use sakila
+# New Collection
+> db.createCollection('customers')
+# Import json into DB; If collection doesn't exist, it will create new one
+$ mongoimport --db sakila --collection customers --file customers.json
+	 #+end_src
+** Set up Flask Backend in Python
+  1) Research and find Flask tutorial in [[https://medium.freecodecamp.org/how-to-build-a-web-application-using-flask-and-deploy-it-to-the-cloud-3551c985e492][freeCodeCamp]]
+  2) Create new conda environemtn
+     #+begin_src shell
+$conda create -n webServiceChallenge python=3.7 anaconda
+$conda activate webServiceChallenge
+     #+end_src
+  3) Create main.py, run, and it just works
+** Connection between Flask and Mongodb
+  1) Install PyMongo in Conda
+  2) Create jupyter notebook to test connection
+  3) Create simple testing code with instruction in [[https://api.mongodb.com/python/current/tutorial.html][PyMongo Documentation]]
+	 #+begin_src python
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+
+db = client['sakila']
+customers = db['customers']
+
+customers.find_one()
+	 #+end_src
+  4)
+
+** Design Search REST API and Research Best Practice (filtering)
+   - [[https://hackernoon.com/restful-api-design-step-by-step-guide-2f2c9f9fcdbf][Principle of Designing RESTful APIs from Hackermoon]]
+   - Configure request handler in Flask to return json; also load url param into Json [[http://api.mongodb.com/python/current/api/bson/json_util.html][json_util man page]]
+	 #+begin_src python
+from bson.json_util import dumps, loads
+@app.route("/<collection>")
+def searchCollection(collection):
+    q = loads(request.args.get('q'))
+    print (q)
+    docs = db[collection].find(q)
+    return dumps(docs)
+	 #+end_src
+   - Initial API Design
+	 | URL                          | Type | Description                                                  | Example                       |
+	 |------------------------------+------+--------------------------------------------------------------+-------------------------------|
+	 | /<collection>?q=<mongoQuery> | GET  | Fetch all docs in <collection> that matches the <mongoQuery> | /films/?q={"Tile": "Avenger"} |
+	 | /<collection>/<id>           | GET  | Fetch specific doc in <collection> with specific <id>        | /customers/10                 |
+
+** Set up Simple Angular Frontend
+   1) Reuse code from Augular Tour-of-hero Tutorial for Search Bar
+   2) Set up Sakila Service
+	  #+begin_src typescript
+// In app.module.ts
+import { HttpClientModule }    from '@angular/common/http';
+// Import it in imports: array
+// In sakila.service.ts
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+// Inject HttpClient into the constructor in a private property called http.
+
+	  #+end_src
+   3) Follow Tutorial to set up search bar
+
+* Scalability and Security
+  | Concern                           | Type     | Proper Response |
+  |-----------------------------------+----------+-----------------|
+  | API calls to a invalid endpoint   | Security |                 |
+  | API calls to non-exist collection | Security |                 |
+  | API calls with invalid mongoQuery | Security |                 |
+  | API calls with                    |          |                 |
+* Resources (AKA things that I will use a lot)
+** Mongodb CLI
+   #+begin_src shell
+# New Database
+>use sakila
+# New Collection
+>db.createCollection('customers')
+# Import json into DB; If collection doesn't exist, it will create new one
+$mongoimport --db sakila --collection customers --file customers.json
+   #+end_src
+** Conda
+   #+begin_src shell
+$conda create -n webServiceChallenge python=3.7 anaconda
+   #+end_src
+** Kill Python Service
+   #+begin_src shell
+# Locate Python Service
+$ps -fA | grep python
+$kill 81651
+   #+end_src
