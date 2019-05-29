@@ -19,6 +19,22 @@ export class SakilaService {
     console.log(requestUrl);
     return this.http.get<any[]>(requestUrl);
   }
+  searchCollection(term: string, coltn: string, key: string): Observable<any[]> {
+    if (!term.trim()) {
+      // if not search term, return empty hero array.
+      return of([]);
+    }
+    var requestUrl: string = `${this.baseUrl}/${coltn}?q={"${key}": {"$regex": "^${term}.*", "$options": "-i"}}`;
+    return this.http.get<any[]>(requestUrl);
+  }
+  fetchKeys(coltn: string): Observable<any[]> {
+    if (!coltn.trim()) {
+      // if not search term, return empty hero array.
+      return of([]);
+    }
+    var requestUrl: string = `${this.baseUrl}/keys/${coltn}`;
+    return this.http.get<any[]>(requestUrl);
+  }
   constructor(
     private http: HttpClient) { }
 }

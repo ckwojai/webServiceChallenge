@@ -73,7 +73,10 @@ def searchCollection(collection):
 	 | URL                          | Type | Description                                                  | Example                       |
 	 |------------------------------+------+--------------------------------------------------------------+-------------------------------|
 	 | /<collection>?q=<mongoQuery> | GET  | Fetch all docs in <collection> that matches the <mongoQuery> | /films/?q={"Tile": "Avenger"} |
-	 | /<collection>/<id>           | GET  | Fetch specific doc in <collection> with specific <id>        | /customers/10                 |
+	 | /<collection>/<id>           | GET  | Fetch specific doc in <collection> with specific <id>        | /customer/10                  |
+	 | /keys/<collection>           | GET  | Fetch all keys names in top level from <collection>          | /keys/films                   |
+	 |                              |      |                                                              |                               |
+
 
 ** Set up Simple Angular Frontend
    1) Reuse code from Augular Tour-of-hero Tutorial for Search Bar
@@ -90,12 +93,37 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
    3) Follow Tutorial to set up search bar
 
 * Scalability and Security
-  | Concern                           | Type     | Proper Response |
-  |-----------------------------------+----------+-----------------|
-  | API calls to a invalid endpoint   | Security |                 |
-  | API calls to non-exist collection | Security |                 |
-  | API calls with invalid mongoQuery | Security |                 |
-  | API calls with                    |          |                 |
+** Ideas
+  | Concern                           | Type        | Proper Response                       |
+  |-----------------------------------+-------------+---------------------------------------|
+  | API calls to a invalid endpoint   | Security    |                                       |
+  | API calls to non-exist collection | Security    |                                       |
+  | API calls with invalid mongoQuery | Security    |                                       |
+  | API calls with                    |             |                                       |
+  |                                   | Security    | API Keys                              |
+  |                                   | Security    | ssl certificates for https            |
+  |                                   | Security    | Limit Amount of request per hour      |
+  |                                   | Scalability | Pagination                            |
+  |                                   | Both        | Set up Nginx Server in front of Flask |
+  |                                   | Scalability | Limit Data achieved at time           |
+  |                                   |             |                                       |
+  |                                   |             |                                       |
+
+** Resources
+   - [[https://blog.restcase.com/rest-api-error-codes-101/][REST API Error Codes 101]]
+** Backend Validation
+   | Type        | End Point                    | Validation                                 | HTTP Error Code | Error Message                  |
+   |-------------+------------------------------+--------------------------------------------+-----------------+--------------------------------|
+   | URL Param   | <collection>?q=<mongoQuery>  | if <collection> in collectionList          |             400 | Collection Doesn't Exist       |
+   | URL Param   | <collection>?q=<mongoQuery>  | if <mongoQuery> is not a valid Json object |             400 | mongoQuery is not a valid Json |
+   | URL Param   | /<collection>/<id>           | if <collection> in collectionList          |             400 | Collection Doesn't Exist       |
+   | Kill Switch |                              |                                            |                 |                                |
+   |             | all other routes not defined | handled by flask by default                |             404 | Bad Request                    |
+
+** Scalability
+
+
+
 * Resources (AKA things that I will use a lot)
 ** Mongodb CLI
    #+begin_src shell
@@ -116,3 +144,5 @@ $conda create -n webServiceChallenge python=3.7 anaconda
 $ps -fA | grep python
 $kill 81651
    #+end_src
+** Random
+   - [[https://stackoverflow.com/questions/23821655/is-exposing-mongodb-query-over-rest-api-safe][Exposing Mongodb Query]]
