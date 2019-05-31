@@ -4,7 +4,7 @@ from bson.json_util import dumps, loads
 
 
 from pymongo import MongoClient
-client = MongoClient('localhost', 27017)
+client = MongoClient("mongodb+srv://admin:pycqed-Vamqef-nypdu6@webservicechallenge-1jjj8.gcp.mongodb.net/test?retryWrites=true&w=majority")
 db = client['sakila']
 
 app = Flask(__name__)

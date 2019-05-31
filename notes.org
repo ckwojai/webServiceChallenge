@@ -41,7 +41,10 @@ $ mongoimport --db sakila --collection customers --file customers.json
 $conda create -n webServiceChallenge python=3.7 anaconda
 $conda activate webServiceChallenge
      #+end_src
-  3) Create main.py, run, and it just works
+  3) Create main.py, and run using the following shell command for auto-reload capability
+	 #+begin_src shell
+	 FLASK_APP=main.py FLASK_DEBUG=1 python -m flask run
+	 #+end_src
 ** Connection between Flask and Mongodb
   1) Install PyMongo in Conda
   2) Create jupyter notebook to test connection
@@ -123,7 +126,32 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 ** Scalability
 
 
+* Deployment
+** Plan
+   1) Set up MongoDB instance
+   2) Create a Compute Engine, configure Flask and connect to the MongoDB instance
+   3) Set up external IP for the Compute Engine
 
+** Mongodb Instance
+   1) Search Google Marketplace: [[https://console.cloud.google.com/marketplace/details/gc-launcher-for-mongodb-atlas/mongodb-atlas?q=mongo&id=1da5c047-e091-4ef3-bbbd-1e24a7c82a42&project=single-shadow-129207&folder&organizationId][MongoDB Atlas]]
+   2) Follow this tutorial to set up Atlas [[https://cloud.google.com/community/tutorials/mongodb-atlas-appengineflex-nodejs-app][Hello World app - MongoDB Atlas and App Engine]]
+   3) Import sample data in json dump to Atlas using [[https://cloud.mongodb.com/v2/5cf061b479358eca3f40a22d#clusters/commandLineTools/webServiceChallenge][Command Line Tools]]
+	  #+begin_src shell
+sudo mongoimport --host webServiceChallenge-shard-0/webservicechallenge-shard-00-00-1jjj8.gcp.mongodb.net:27017,webservicechallenge-shard-00-01-1jjj8.gcp.mongodb.net:27017,webservicechallenge-shard-00-02-1jjj8.gcp.mongodb.net:27017 --ssl --username admin --password pycqed-Vamqef-nypdu6 --authenticationDatabase admin --db sakila --collection stores --type json --file ~/Downloads/sakila/stores.json
+	  #+end_src
+** Test DB Connection in Python
+   1) Use the connection string in "[[https://cloud.mongodb.com/v2/5cf061b479358eca3f40a22d#clusters/connect?clusterId=webServiceChallenge][Connect to your Application]]" , replace you password
+	  #+begin_src python
+client = pymongo.MongoClient("mongodb+srv://admin:<password>@webservicechallenge-1jjj8.gcp.mongodb.net/test?retryWrites=true&w=majority")
+db = client.test
+	  #+end_src
+   2) Install dnspython in conda environment, since "srv" in the url uses it
+   3) Run it and it works!
+** Compute Engine with Flask and Nginx
+   1) Search Google Tutorial on Flask & Compute Engine: [[https://cloud.google.com/python/tutorials/bookshelf-on-compute-engine][Running the Python Bookshelf on Compute Engine]]
+   2)
+   3)
+   4)
 * Resources (AKA things that I will use a lot)
 ** Mongodb CLI
    #+begin_src shell
