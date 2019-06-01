@@ -95,37 +95,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 	  #+end_src
    3) Follow Tutorial to set up search bar
 
-* Scalability and Security
-** Ideas
-  | Concern                           | Type        | Proper Response                       |
-  |-----------------------------------+-------------+---------------------------------------|
-  | API calls to a invalid endpoint   | Security    |                                       |
-  | API calls to non-exist collection | Security    |                                       |
-  | API calls with invalid mongoQuery | Security    |                                       |
-  | API calls with                    |             |                                       |
-  |                                   | Security    | API Keys                              |
-  |                                   | Security    | ssl certificates for https            |
-  |                                   | Security    | Limit Amount of request per hour      |
-  |                                   | Scalability | Pagination                            |
-  |                                   | Both        | Set up Nginx Server in front of Flask |
-  |                                   | Scalability | Limit Data achieved at time           |
-  |                                   |             |                                       |
-  |                                   |             |                                       |
-
-** Resources
-   - [[https://blog.restcase.com/rest-api-error-codes-101/][REST API Error Codes 101]]
-** Backend Validation
-   | Type        | End Point                    | Validation                                 | HTTP Error Code | Error Message                  |
-   |-------------+------------------------------+--------------------------------------------+-----------------+--------------------------------|
-   | URL Param   | <collection>?q=<mongoQuery>  | if <collection> in collectionList          |             400 | Collection Doesn't Exist       |
-   | URL Param   | <collection>?q=<mongoQuery>  | if <mongoQuery> is not a valid Json object |             400 | mongoQuery is not a valid Json |
-   | URL Param   | /<collection>/<id>           | if <collection> in collectionList          |             400 | Collection Doesn't Exist       |
-   | Kill Switch |                              |                                            |                 |                                |
-   |             | all other routes not defined | handled by flask by default                |             404 | Bad Request                    |
-
-** Scalability
-
-
 * Deployment
 ** Plan
    1) Set up MongoDB instance
@@ -195,6 +164,38 @@ server {
   }
 }
 	  #+end_src
+* Scalability and Security
+** Ideas
+  | Concern                           | Type        | Proper Response                       |
+  |-----------------------------------+-------------+---------------------------------------|
+  | API calls to a invalid endpoint   | Security    |                                       |
+  | API calls to non-exist collection | Security    |                                       |
+  | API calls with invalid mongoQuery | Security    |                                       |
+  | API calls with                    |             |                                       |
+  |                                   | Security    | API Keys                              |
+  |                                   | Security    | SSL certificates for https            |
+  |                                   | Security    | Limit Amount of request per hour      |
+  |                                   | Scalability | Pagination                            |
+  |                                   | Both        | Set up Nginx Server in front of Flask |
+  |                                   | Scalability | Limit Data achieved at time           |
+  |                                   | Security    | Mongo Atlas IP Whitelist              |
+  |                                   |             |                                       |
+
+** Resources
+   - [[https://blog.restcase.com/rest-api-error-codes-101/][REST API Error Codes 101]]
+** Backend Validation
+   | Type        | End Point                    | Validation                                 | HTTP Error Code | Error Message                  |
+   |-------------+------------------------------+--------------------------------------------+-----------------+--------------------------------|
+   | URL Param   | <collection>?q=<mongoQuery>  | if <collection> in collectionList          |             400 | Collection Doesn't Exist       |
+   | URL Param   | <collection>?q=<mongoQuery>  | if <mongoQuery> is not a valid Json object |             400 | mongoQuery is not a valid Json |
+   | URL Param   | /<collection>/<id>           | if <collection> in collectionList          |             400 | Collection Doesn't Exist       |
+   | Kill Switch |                              |                                            |                 |                                |
+   |             | all other routes not defined | handled by flask by default                |             404 | Bad Request                    |
+
+** Flask+Gunicorn+Nginx
+   -
+** Scalability
+
 * Resources (AKA things that I will use a lot)
 ** Mongodb CLI
    #+begin_src shell
