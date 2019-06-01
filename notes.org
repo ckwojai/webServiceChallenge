@@ -145,13 +145,56 @@ sudo mongoimport --host webServiceChallenge-shard-0/webservicechallenge-shard-00
 client = pymongo.MongoClient("mongodb+srv://admin:<password>@webservicechallenge-1jjj8.gcp.mongodb.net/test?retryWrites=true&w=majority")
 db = client.test
 	  #+end_src
-   2) Install dnspython in conda environment, since "srv" in the url uses it
+   2) Install DNS python in conda environment, since "srv" in the url uses it
    3) Run it and it works!
 ** Compute Engine with Flask and Nginx
    1) Search Google Tutorial on Flask & Compute Engine: [[https://cloud.google.com/python/tutorials/bookshelf-on-compute-engine][Running the Python Bookshelf on Compute Engine]]
-   2)
-   3)
-   4)
+   2) Create a VM instance with minimal configuration: Ubuntu 18.04; g1-small CPU;
+   3) SSH and set up python environment
+	  #+begin_src shell
+# Clone the repo
+$git clone https://github.com/ckwojai/webServiceChallenge
+# Set up Conda [[https://www.digitalocean.com/community/tutorials/how-to-install-anaconda-on-ubuntu-18-04-quickstart][Digital Ocean]]
+# This also set up Python 3.7
+$cd /tmp
+$curl -O https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh
+$sha256sum Anaconda3-2019.03-Linux-x86_64.sh
+$bash Anaconda3-2019.03-Linux-x86_64.sh
+$source ~/.bashrc
+$conda create --name webServiceChallenge python=3
+$conda activate webServiceChallenge
+$conda install --file requirements.txt
+$python main.py
+# This runs and open up development server
+	  #+end_src
+   4) Research setting up Gunicorn and Nginx in front of flask [[https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-14-04][Digital Ocean Tutorial]]
+	  #+begin_src shell
+# Create wsgi.app, then run the following
+# Notes that WSGI server defaults to looking for the callable named "application"
+$gunicorn --bind 0.0.0.0:8000 wsgi
+	  #+end_src
+   5) Set up Nginx, using tutorial in [[https://www.cyberciti.biz/faq/install-and-configure-nginx-on-ubuntu-linux-18-04-lts/][nix]]
+	  #+begin_src shell
+$sudo apt update
+$sudo apt upgrade
+$sudo apt install nginx
+$sudo systemctl enable nginx
+$sudo systemctl start nginx
+	  #+end_src
+   6) Configure Nginx for reverse proxy 80 to our flask App, with tutorials from [[https://www.linode.com/docs/web-servers/nginx/use-nginx-reverse-proxy/][Digital Ocean]]
+	  #+LOCATION: /etc/nginx/sites-available/default
+	  #+begin_src
+server {
+  listen 80;
+  listen [::]:80;
+
+#  server_name example.com;
+
+  location / {
+      proxy_pass http://localhost:3000/;
+  }
+}
+	  #+end_src
 * Resources (AKA things that I will use a lot)
 ** Mongodb CLI
    #+begin_src shell
