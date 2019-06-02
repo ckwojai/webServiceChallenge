@@ -54,22 +54,20 @@ def searchCollection(collection):
         curDocs = db[collection].find(qJson)
         docs = dumps(curDocs)
     except ValueError as e:
-        print (e)
         abort(500, "Error Retrieving Data from Mongodb. Message: {}".format(e))
     return docs
 
 @app.route("/<collection>/<docId>")
 def searchCollectionbyId(collection, docId):
-    # collection = collection + 's'
+    collection = collection + 's'
     if not collectionValidation(collection):
         abort(400, "Collection Doesn't Exist")
-    # if not checkDocId(docId):
-    #     abort(400, "Invalid docId")
+    if not checkDocId(docId):
+        abort(400, "Invalid docId")
     try:
         curDoc = db[collection].find_one({"_id": int(docId)})
         doc = dumps(curDoc)
     except ValueError as e:
-        print (e)
         abort(500, "Error Retrieving Data from Mongodb. Message: {}".format(e))
     return doc
 
@@ -86,7 +84,6 @@ def getAllKeysfromCollection(collection):
         keys.remove("_id")
         return dumps(keys)
     except ValueError as e:
-        print (e)
         abort(500, "Error Retrieving Data from Mongodb. Message: {}".format(e))
 
 if __name__ == "__main__":

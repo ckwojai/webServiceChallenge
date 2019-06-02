@@ -76,10 +76,9 @@ def searchCollection(collection):
 	 | URL                          | Type | Description                                                  | Example                       |
 	 |------------------------------+------+--------------------------------------------------------------+-------------------------------|
 	 | /<collection>?q=<mongoQuery> | GET  | Fetch all docs in <collection> that matches the <mongoQuery> | /films/?q={"Tile": "Avenger"} |
-	 | /<collection>/<id>           | GET  | Fetch specific doc in <collection> with specific <id>        | /customer/10                  |
+	 | /<collection>/<id>           | GET  | Fetch specific doc in <collection> with specific <id>        | /customers/10                 |
 	 | /keys/<collection>           | GET  | Fetch all keys names in top level from <collection>          | /keys/films                   |
 	 |                              |      |                                                              |                               |
-
 
 ** Set up Simple Angular Frontend
    1) Reuse code from Augular Tour-of-hero Tutorial for Search Bar
@@ -184,16 +183,17 @@ server {
 ** Resources
    - [[https://blog.restcase.com/rest-api-error-codes-101/][REST API Error Codes 101]]
 ** Backend Validation
-   | Type        | End Point                    | Validation                                 | HTTP Error Code | Error Message                  |
-   |-------------+------------------------------+--------------------------------------------+-----------------+--------------------------------|
-   | URL Param   | <collection>?q=<mongoQuery>  | if <collection> in collectionList          |             400 | Collection Doesn't Exist       |
-   | URL Param   | <collection>?q=<mongoQuery>  | if <mongoQuery> is not a valid Json object |             400 | mongoQuery is not a valid Json |
-   | URL Param   | /<collection>/<id>           | if <collection> in collectionList          |             400 | Collection Doesn't Exist       |
-   | Kill Switch |                              |                                            |                 |                                |
-   |             | all other routes not defined | handled by flask by default                |             404 | Bad Request                    |
+   | Type         | End Point                    | Validation                                 | HTTP Error Code | Error Message                                       |
+   |--------------+------------------------------+--------------------------------------------+-----------------+-----------------------------------------------------|
+   | URL Param    | <collection>?q=<mongoQuery>  | if <collection> in collectionList          |             400 | Collection Doesn't Exist                            |
+   | URL Param    | <collection>?q=<mongoQuery>  | if <mongoQuery> is not a valid Json object |             400 | mongoQuery is not a valid Json                      |
+   | URL Param    | /<collection>/<id>           | if <collection> in collectionList          |             400 | Collection Doesn't Exist                            |
+   | Wrong Routes | all other routes not defined | handled by flask by default                |             404 | Bad Request                                         |
+   | Kill Switch  | All                          | Using Try...Except                         |             500 | Error Retrieving Data... then display Error Message |
 
 ** Flask+Gunicorn+Nginx
-   -
+   - Default Flask dev server serves only one request at a time; Gunicorn is a production WSGI server that is multi-thread enabled
+   - Nginx is a more advanced reverse-proxy server with features for better scalability, such as more secure with SSL termination, load balancing, and so on
 ** Scalability
 
 * Resources (AKA things that I will use a lot)
@@ -218,3 +218,53 @@ $kill 81651
    #+end_src
 ** Random
    - [[https://stackoverflow.com/questions/23821655/is-exposing-mongodb-query-over-rest-api-safe][Exposing Mongodb Query]]
+
+* README.org
+** Deliverable
+   - [[https://stackblitz.com/edit/github-gigeyv][Stackblitz Deployed Angular Frontend]]
+** Requirement
+*** Restful API using Python or Java that performs a search
+   1) The request should accept a search string as input.
+   2) The data to be searched should be in a MongoDB database.
+   3) The response should be formatted in JSON.
+*** The API should handle at least one scalability concern
+*** The API should handle at least one security concern.
+*** Good programming best practices / Ability to write Reusable Code / Testing Strategy
+** Summary
+*** Sample Database is set up with data from [[http://guyharrison.squarespace.com/blog/2015/3/23/sakila-sample-schema-in-mongodb.html][Sakila]]
+	1) Sakila was a film-rental company
+	2) Three collections: customers, films, stores
+*** Backend is implemented in Flask, with connection to Mongodb using Pymongo
+*** RESTful API Design
+	 | URL                          | Type | Description                                                  | Example                        |
+	 |------------------------------+------+--------------------------------------------------------------+--------------------------------|
+	 | /<collection>?q=<mongoQuery> | GET  | Fetch all docs in <collection> that matches the <mongoQuery> | /films/?q={"Title": "Avenger"} |
+	 | /<collection>/<id>           | GET  | Fetch specific doc in <collection> with specific <id>        | /customers/10                  |
+	 | /keys/<collection>           | GET  | Fetch all keys names in top level from <collection>          | /keys/films                    |
+*** Simple Angular Frontend
+	1) Select Collection and associated Keys will be available to select by calling the /keys/<collection> API
+	2) Input the search Query String, Angular will send an API request with mongoQuery as your type
+	   #+begin_src typescript
+// Use the /<collection>?q=<mongoQuery> API
+var requestUrl: string = `${this.baseUrl}/${coltn}?q={"${key}": {"$regex": "^${term}.*", "$options": "-i"}}`;
+	   #+end_src
+	3) Potential results will be returned and listed below
+*** Deployment
+	1) Database hosted in MongoDB Atlas
+	2) Flask+Gunicorn+Nginx configured inside Google Computer Engine, with domain name configured as [[https://webchallenge.kinchang.com]]
+	3) Frontend hosted in [[https://stackblitz.com/edit/github-gigeyv][Stackblitz]]
+*** Security Concerns
+	1) Backend Data Validation
+	   | Type         | End Point                    | Validation                                 | HTTP Error Code | Error Message                                       |
+	   |--------------+------------------------------+--------------------------------------------+-----------------+-----------------------------------------------------|
+	   | URL Param    | <collection>?q=<mongoQuery>  | if <collection> in collectionList          |             400 | Collection Doesn't Exist                            |
+	   | URL Param    | <collection>?q=<mongoQuery>  | if <mongoQuery> is not a valid Json object |             400 | mongoQuery is not a valid Json                      |
+	   | URL Param    | /<collection>/<id>           | if <collection> in collectionList          |             400 | Collection Doesn't Exist                            |
+	   | Wrong Routes | all other routes not defined | handled by flask by default                |             404 | Bad Request                                         |
+	   | Kill Switch  | All                          | Using Try...Except                         |             500 | Error Retrieving Data... then display Error Message |
+	2) Configured in MongoDB Atlas, only White-listed IP (Google VM external IP), with correct credentials will have access to backend database
+	3) The API is HTTPS-secured (avoid man-in-middle attack)
+*** Scalability Concerns
+	1) The Flask server is served with Gunicorn and then Nginx in the front, this brings various scalability benefits
+	   - Default Flask dev server serves only one request at a time; Gunicorn is a production WSGI server that is multi-thread enabled
+	   - Nginx is a more advanced reverse-proxy server with features for better scalability, such as more secure with SSL termination, load balancing, and so on

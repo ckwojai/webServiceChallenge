@@ -6,8 +6,7 @@ import { Observable, of } from 'rxjs';
   providedIn: 'root'
 })
 export class SakilaService {
-  private baseUrl: string = 'http://35.222.91.21';
-  // private baseUrl: string = 'http://localhost:5000';
+  private baseUrl: string = 'https://webchallenge.kinchang.com';
   getFilms(): Observable<any[]> {
     return this.http.get<any[]>(this.baseUrl);
   }
