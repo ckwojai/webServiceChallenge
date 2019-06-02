@@ -1,5 +1,6 @@
 * Deliverable
-  - [[https://stackblitz.com/edit/github-gigeyv][Stackblitz Deployed Angular Frontend]]
+  - [[https://github-gigeyv.stackblitz.io][Stackblitz Live Page]]
+  - [[https://stackblitz.com/edit/github-gigeyv][Stackblitz Edit Page]]
 * Table of Contents                                                   :TOC_2:
 - [[#deliverable][Deliverable]]
 - [[#requirements][Requirements]]
@@ -17,6 +18,7 @@
   - [[#scalability-concerns][Scalability Concerns]]
 
 * Requirements
+
 ** Restful API using Python or Java that performs a search
   1) The request should accept a search string as input.
   2) The data to be searched should be in a MongoDB database.
