@@ -220,14 +220,11 @@ $kill 81651
    - [[https://stackoverflow.com/questions/23821655/is-exposing-mongodb-query-over-rest-api-safe][Exposing Mongodb Query]]
 
 * Improvement
-** Data Sharing between components using service
-   1) Research [[https://stackoverflow.com/questions/47376442/angular-4-how-to-pass-api-data-from-one-component-into-another-component][using BehaviorSubject]]
-   2)
-   3)
 ** New Table Component
 * README.org
 ** Deliverable
-   - [[https://stackblitz.com/edit/github-gigeyv][Stackblitz Deployed Angular Frontend]]
+   - [[https://stackblitz.com/edit/github-ttclkp][Stackblitz Editor Page]]
+   - [[https://github-ttclkp.stackblitz.io][Stackblitz Live Page]]
 ** Requirement
 *** Restful API using Python or Java that performs a search
    1) The request should accept a search string as input.
@@ -248,17 +245,23 @@ $kill 81651
 	 | /<collection>/<id>           | GET  | Fetch specific doc in <collection> with specific <id>        | /customers/10                  |
 	 | /keys/<collection>           | GET  | Fetch all keys names in top level from <collection>          | /keys/films                    |
 *** Simple Angular Frontend
-	1) Select Collection and associated Keys will be available to select by calling the /keys/<collection> API
+	1) Select Collection and associated search Keys will be available to select
 	2) Input the search Query String, Angular will send an API request with mongoQuery as your type
 	   #+begin_src typescript
 // Use the /<collection>?q=<mongoQuery> API
 var requestUrl: string = `${this.baseUrl}/${coltn}?q={"${key}": {"$regex": "^${term}.*", "$options": "-i"}}`;
 	   #+end_src
-	3) Potential results will be returned and listed below
+	3) Relevant Results will be displayed in a Table
+	4) Simple Error Handler if 404 Bad Request is returned from API
+	   #+begin_src typescript
+return this.http.get<any[]>(requestUrl).pipe(
+catchError(this.handleError<any>('searchCollection', []))
+);
+	   #+end_src
 *** Deployment
 	1) Database hosted in MongoDB Atlas
 	2) Flask+Gunicorn+Nginx configured inside Google Computer Engine, with domain name configured as [[https://webchallenge.kinchang.com]]
-	3) Frontend hosted in [[https://stackblitz.com/edit/github-gigeyv][Stackblitz]]
+	3) Frontend hosted in [[https://stackblitz.com/edit/github-ttclkp][Stackblitz]]
 *** Security Concerns
 	1) Backend Data Validation
 	   | Type         | End Point                    | Validation                                 | HTTP Error Code | Error Message                                       |

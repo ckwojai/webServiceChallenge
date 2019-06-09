@@ -12,11 +12,11 @@ export interface SakilaKeys {
   films: string[];
   stores: string[];
 };
-
+// Hardcode Search Options for each Collections
 const SEARCH_BY_LIST: SakilaKeys = {
-  customers: ["First Name", "Last Name", "Address", "City", "Country", "District", "Phone"],
-  films: ["Title", "Category", "Length", "Rating", "Rental Duration", "Replacement Cost", "Special Features"],
-  stores: ["Address", "City", "Country", "Manager First Name", "Manager Last Name", "Phone"]
+  customers: ["_id", "First Name", "Last Name", "Address", "City", "Country", "District", "Phone"],
+  films: ["_id", "Title", "Category", "Length", "Rating", "Rental Duration", "Replacement Cost", "Special Features"],
+  stores: ["_id", "Address", "City", "Country", "Manager First Name", "Manager Last Name", "Phone"]
 };
 
 @Component({
@@ -27,9 +27,10 @@ const SEARCH_BY_LIST: SakilaKeys = {
 
 export class SakilaSearchComponent implements OnInit {
   searchBoxValue: string;
-  coltnNames: string[] = ["customers", "films", "stores"];
-  searchResults$: Observable<any[]>;
+  coltnNames: string[] = ["customers", "films", "stores"]; // Hardcode Collection Names
   searchByList: SakilaKeys = SEARCH_BY_LIST;
+
+  searchResults$: Observable<any[]>;
 
   selectedColtn: string = "films";
   selectedKey: string = "Title";
@@ -38,8 +39,9 @@ export class SakilaSearchComponent implements OnInit {
   search(term: string): void {
     this.searchTerms.next(term);
   }
+  // Reset Input Field and Json results when Collection / Search Key is re-selected
   onColtnClicked(coltnName: string): void {
-    this.selectedKey = this.searchByList[coltnName][0];
+    this.selectedKey = this.searchByList[coltnName][1];
     this.searchBoxValue = "";
     this.searchTerms.next("");
   }
