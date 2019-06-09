@@ -14,8 +14,8 @@ export interface SakilaKeys {
 };
 
 const SEARCH_BY_LIST: SakilaKeys = {
-  customers: ["Address", "City", "Country", "District", "First Name", "Last Name", "Phone"],
-  films: ["Title", "Category", "Description", "Length", "Rating", "Rating", "Rental Duration", "Replacement Cost", "Special Features"],
+  customers: ["First Name", "Last Name", "Address", "City", "Country", "District", "Phone"],
+  films: ["Title", "Category", "Length", "Rating", "Rental Duration", "Replacement Cost", "Special Features"],
   stores: ["Address", "City", "Country", "Manager First Name", "Manager Last Name", "Phone"]
 };
 
@@ -26,16 +26,26 @@ const SEARCH_BY_LIST: SakilaKeys = {
 })
 
 export class SakilaSearchComponent implements OnInit {
+  searchBoxValue: string;
   coltnNames: string[] = ["customers", "films", "stores"];
   searchResults$: Observable<any[]>;
   searchByList: SakilaKeys = SEARCH_BY_LIST;
 
-  selectedColtn: string;
-  selectedKey: string;
+  selectedColtn: string = "films";
+  selectedKey: string = "Title";
 
   private searchTerms = new Subject<string>();
   search(term: string): void {
     this.searchTerms.next(term);
+  }
+  onColtnClicked(coltnName: string): void {
+    this.selectedKey = this.searchByList[coltnName][0];
+    this.searchBoxValue = "";
+    this.searchTerms.next("");
+  }
+  onSearchKeyClicked(): void {
+    this.searchBoxValue = "";
+    this.searchTerms.next("")
   }
   constructor(
     private sakilaService: SakilaService

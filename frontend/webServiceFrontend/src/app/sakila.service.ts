@@ -31,7 +31,7 @@ export class SakilaService {
       // if not search term, return empty hero array.
       return of([]);
     }
-    var requestUrl: string = `${this.baseUrl}/${coltn}?q={"${key}": {"$regex": "^${term}.*", "$options": "-i"}}`;
+    var requestUrl: string = `${this.baseUrl}/${coltn}?q={"${key}": {"$regex": "${term}.*", "$options": "-i"}}`;
     return this.http.get<any[]>(requestUrl);
   }
   fetchKeys(coltn: string): Observable<any[]> {

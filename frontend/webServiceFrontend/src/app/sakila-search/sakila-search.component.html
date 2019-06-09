@@ -1,7 +1,7 @@
 <mat-form-field>
   <mat-label>Collection</mat-label>
   <mat-select [(value)]="selectedColtn">
-	<mat-option *ngFor="let coltnName of coltnNames" value={{coltnName}}>
+	<mat-option *ngFor="let coltnName of coltnNames" (click) ="onColtnClicked(coltnName)" value={{coltnName}}>
       {{coltnName}}
 	</mat-option>
   </mat-select>
@@ -10,7 +10,7 @@
 <mat-form-field>
   <mat-label>Search By</mat-label>
   <mat-select [(value)]="selectedKey">
-	<mat-option *ngFor="let key of searchByList[selectedColtn]" value={{key}}>
+	<mat-option *ngFor="let key of searchByList[selectedColtn]" (click)="onSearchKeyClicked()" value={{key}}>
 	  {{key}}
 	</mat-option>
   </mat-select>
@@ -18,14 +18,8 @@
 
 
 <div id="search-component">
-  <input #searchBox id="search-box" (input)="search(searchBox.value)" />
-  <ul class="search-result">
-    <li *ngFor="let item of searchResults$ | async" >
-	  {{item[this.selectedKey]}}
-    </li>
-  </ul>
+  <input [(ngModel)]="searchBoxValue" #searchBox id="search-box" (input)="search(searchBox.value)" />
 </div>
-
 <div>
-  <app-result-table></app-result-table>
+  <app-result-table [displayedData]="searchResults$ | async" [displayedCols]="searchByList[selectedColtn]" ></app-result-table>
 </div>

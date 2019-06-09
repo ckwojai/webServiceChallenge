@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ResultTableComponent } from './result-table/result-table.component';
 import { MatTableModule } from '@angular/material/table';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
     ResultTableComponent
   ],
   imports: [
+    FormsModule,
     BrowserAnimationsModule,
     MatTableModule,
     MatFormFieldModule,
