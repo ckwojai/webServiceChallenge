@@ -1,11 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SakilaService {
+  private searchResults = new BehaviorSubject<any>(null);
+  public searchResults$ = this.searchResults.asObservable();
+
+  private setResults(data: any): void {
+    this.searchResults.next(data);
+  }
+
   private baseUrl: string = 'https://webchallenge.kinchang.com';
   getFilms(): Observable<any[]> {
     return this.http.get<any[]>(this.baseUrl);

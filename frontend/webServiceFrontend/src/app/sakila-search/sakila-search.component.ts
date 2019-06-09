@@ -5,6 +5,20 @@ import {
   debounceTime, distinctUntilChanged, switchMap
 } from 'rxjs/operators';
 
+
+
+export interface SakilaKeys {
+  customers: string[];
+  films: string[];
+  stores: string[];
+};
+
+const SEARCH_BY_LIST: SakilaKeys = {
+  customers: ["Address", "City", "Country", "District", "First Name", "Last Name", "Phone"],
+  films: ["Title", "Category", "Description", "Length", "Rating", "Rating", "Rental Duration", "Replacement Cost", "Special Features"],
+  stores: ["Address", "City", "Country", "Manager First Name", "Manager Last Name", "Phone"]
+};
+
 @Component({
   selector: 'app-sakila-search',
   templateUrl: './sakila-search.component.html',
@@ -13,18 +27,15 @@ import {
 
 export class SakilaSearchComponent implements OnInit {
   coltnNames: string[] = ["customers", "films", "stores"];
-  searchByList$: string[] = [];
-
-  selectedColtn: string = "";
-  selectedKey: string = "";
   searchResults$: Observable<any[]>;
+  searchByList: SakilaKeys = SEARCH_BY_LIST;
+
+  selectedColtn: string;
+  selectedKey: string;
+
   private searchTerms = new Subject<string>();
   search(term: string): void {
     this.searchTerms.next(term);
-  }
-  onButtonClick(coltn: string) {
-    this.sakilaService.fetchKeys(coltn).
-      subscribe(list => this.searchByList$ = list);
   }
   constructor(
     private sakilaService: SakilaService

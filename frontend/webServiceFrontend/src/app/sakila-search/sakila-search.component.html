@@ -1,7 +1,7 @@
 <mat-form-field>
   <mat-label>Collection</mat-label>
   <mat-select [(value)]="selectedColtn">
-	<mat-option *ngFor="let coltnName of coltnNames" value={{coltnName}} (click)="onButtonClick(coltnName)">
+	<mat-option *ngFor="let coltnName of coltnNames" value={{coltnName}}>
       {{coltnName}}
 	</mat-option>
   </mat-select>
@@ -10,7 +10,7 @@
 <mat-form-field>
   <mat-label>Search By</mat-label>
   <mat-select [(value)]="selectedKey">
-	<mat-option *ngFor="let key of searchByList$" value={{key}}>
+	<mat-option *ngFor="let key of searchByList[selectedColtn]" value={{key}}>
 	  {{key}}
 	</mat-option>
   </mat-select>
@@ -24,4 +24,8 @@
 	  {{item[this.selectedKey]}}
     </li>
   </ul>
+</div>
+
+<div>
+  <app-result-table></app-result-table>
 </div>

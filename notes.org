@@ -219,6 +219,12 @@ $kill 81651
 ** Random
    - [[https://stackoverflow.com/questions/23821655/is-exposing-mongodb-query-over-rest-api-safe][Exposing Mongodb Query]]
 
+* Improvement
+** Data Sharing between components using service
+   1) Research [[https://stackoverflow.com/questions/47376442/angular-4-how-to-pass-api-data-from-one-component-into-another-component][using BehaviorSubject]]
+   2)
+   3)
+** New Table Component
 * README.org
 ** Deliverable
    - [[https://stackblitz.com/edit/github-gigeyv][Stackblitz Deployed Angular Frontend]]
